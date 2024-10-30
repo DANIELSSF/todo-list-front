@@ -68,7 +68,7 @@ export default function SignInForm() {
                 type="submit"
                 className="px-6 py-2 mt-4 text-white bg-blue-600 rounded-lg hover:bg-blue-900 dark:bg-blue-500 dark:hover:bg-blue-700"
               >
-                Iniciar Sesión
+                Entrar
               </button>
               <Link
                 href="/auth/register"
