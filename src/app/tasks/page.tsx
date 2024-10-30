@@ -44,18 +44,15 @@ export default function TasksPage() {
   return (
     <ProtectedRoute>
       <div className="min-h-screen p-8 pb-20 bg-gray-900 text-gray-100 flex flex-col items-center">
-        {/* Botón de salida */}
         <div className="absolute top-4 right-4">
           <button
             onClick={handleLogout}
             className="group relative flex items-center justify-center p-2 rounded-full bg-red-600 hover:bg-red-700 transition-all duration-300 shadow-lg hover:shadow-red-600/50"
           >
-            {/* Tooltip */}
             <span className="absolute right-full mr-2 p-1 bg-gray-800 text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
               Cerrar sesión
             </span>
             
-            {/* Icono */}
             <svg
               className="w-6 h-6 text-white"
               fill="none"
@@ -99,7 +96,6 @@ export default function TasksPage() {
           </select>
         </div>
 
-        {/* Lista de tareas */}
         <TaskList tasks={filteredTasks} />
       </div>
     </ProtectedRoute>
