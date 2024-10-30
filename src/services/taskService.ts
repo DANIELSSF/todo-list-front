@@ -30,9 +30,9 @@ export const updateTaskService = async (
 
 export const updateTaskStatusService = async (
   id: string,
-  status: TaskFormData
+  data: TaskFormData
 ): Promise<ITask> => {
-  const resp = await api.put(`task/${id}`, status);
+  const resp = await api.put(`task/${id}`, data);
   return resp.data;
 };
 

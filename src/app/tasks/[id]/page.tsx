@@ -1,26 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import api from '@/services/api';
 import { Spinner } from '@/components/Spinner';
 import { CalendarDays, Clock, Edit3, ArrowLeft, Trash2 } from 'lucide-react';
 import { useTask } from '@/hooks/useTask';
 import EditTaskModal from '@/components/EditTaskModal';
 
-interface Task {
-  userId: string;
-  task: {
-    id: string;
-    title: string;
-    description: string;
-    status: string;
-    dueDate: string;
-    createAt: string;
-    updateAt: string;
-    isActive: boolean;
-  };
-}
 
 export default function TaskPage() {
   const { deleteTask } = useTask();
@@ -29,33 +15,11 @@ export default function TaskPage() {
   const router = useRouter();
   const taskId = params.id as string;
 
-  const [task, setTask] = useState<Task | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [showModal, setShowModal] = useState<boolean>(false);
 
-  useEffect(() => {
-    const loadTask = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        if (!token) {
-          window.location.href = '/auth/login';
-          return;
-        }
+  const {tasks, isLoading}= useTask();
 
-        const response = await api.get(`/task/${taskId}`);
-        setTask(response.data);
-        setError(null);
-      } catch (err) {
-        setError('Error al cargar la tarea');
-        console.error('Error loading task:', err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadTask();
-  }, [taskId]);
+  const task = tasks.find((task) => task.id === taskId);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -81,15 +45,6 @@ export default function TaskPage() {
     return <Spinner />;
   }
 
-  if (error) {
-    return (
-      <div className="min-h-screen p-4 bg-gray-900 flex items-center justify-center">
-        <div className="p-4 bg-red-500/10 text-red-500 rounded-lg max-w-md w-full text-center">
-          <p>{error}</p>
-        </div>
-      </div>
-    );
-  }
 
   if (!task) {
     return (
@@ -117,13 +72,13 @@ export default function TaskPage() {
             <EditTaskModal
               isOpen={showModal}
               onClose={() => setShowModal(false)}
-              task={task.task}
+              task={task}
             />
           )}
           <div className="p-6 border-b border-gray-700">
             <div className="flex justify-between items-start gap-4">
               <h1 className="text-2xl font-bold text-white">
-                {task.task.title}
+                {task.title}
               </h1>
               <div className="flex gap-2">
                 <button
@@ -142,25 +97,25 @@ export default function TaskPage() {
             </div>
 
             <div className="mt-4">
-              {task.task.status === 'OPEN' && (
+              {task.status === 'OPEN' && (
                 <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-teal-500/10 text-teal-500">
                   <span className="w-2 h-2 bg-teal-500 rounded-full mr-2"></span>
                   Pendiente
                 </span>
               )}
-              {task.task.status === 'DONE' && (
+              {task.status === 'DONE' && (
                 <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-500/10 text-blue-500">
                   <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
                   Completada
                 </span>
               )}
-              {task.task.status === 'IN_PROGRESS' && (
+              {task.status === 'IN_PROGRESS' && (
                 <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-500/10 text-yellow-500">
                   <span className="w-2 h-2 bg-yellow-500 rounded-full mr-2"></span>
                   En Progreso
                 </span>
               )}
-              {task.task.status === 'EXPIRED' && (
+              {task.status === 'EXPIRED' && (
                 <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-500/10 text-red-500">
                   <span className="w-2 h-2 bg-red-500 rounded-full mr-2"></span>
                   Vencida
@@ -171,7 +126,7 @@ export default function TaskPage() {
 
           <div className="p-6">
             <div className="prose prose-invert max-w-none">
-              <p className="text-gray-300">{task.task.description}</p>
+              <p className="text-gray-300">{task.description}</p>
             </div>
 
             <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -180,7 +135,7 @@ export default function TaskPage() {
                   <CalendarDays size={20} />
                   <span>Fecha de vencimiento</span>
                 </div>
-                <p className="text-white">{formatDate(task.task.dueDate)}</p>
+                <p className="text-white">{formatDate(task.dueDate)}</p>
               </div>
 
               <div className="bg-gray-700/50 rounded-lg p-4">
@@ -188,7 +143,7 @@ export default function TaskPage() {
                   <Clock size={20} />
                   <span>Última actualización</span>
                 </div>
-                <p className="text-white">{formatDate(task.task.updateAt)}</p>
+                <p className="text-white">{formatDate(task.updateAt)}</p>
               </div>
             </div>
           </div>

@@ -60,14 +60,12 @@ export const TaskProvider: FC<PropsWithChildren> = ({ children }) => {
     }
   };
 
-  const updateTaskState = async (id: string, status: TaskFormData) => {
+  const updateTaskState = async (id: string, data: TaskFormData) => {
     dispatch({ type: '[Task] - Checking' });
     try {
-      const updatedTask = await updateTaskStatusService(id, status);
-      dispatch({
-        type: '[Task] - updateState',
-        payload: { id: updatedTask.id, status: updatedTask.status },
-      });
+      const updatedTask = await updateTaskStatusService(id, data);
+      console.log(updatedTask);
+      dispatch({ type: '[Task] - update', payload: updatedTask });
     } catch (error) {
       console.log(error);
       dispatch({ type: '[Task] - Check' });
